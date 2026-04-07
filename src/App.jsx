@@ -7,9 +7,14 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 import Home from "./pages/Home.jsx";
-import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
 import Purchase from "./pages/Purchase.jsx";
+
+// Новые страницы для животных
+import AnimalsList from "./pages/AnimalsList.jsx";
+import AddAnimal from "./pages/AddAnimal.jsx";
+import AnimalDetail from "./pages/AnimalDetail.jsx";
 
 import { checkAuth } from "./features/auth/authSlice";
 
@@ -17,25 +22,12 @@ function App() {
   const dispatch = useDispatch();
   const { isAuthenticated, loading } = useSelector((state) => state.auth);
 
-  // Проверка авторизации при запуске
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
 
   if (loading) {
-    return (
-      <div style={{ 
-        height: "100vh", 
-        display: "flex", 
-        alignItems: "center", 
-        justifyContent: "center",
-        fontSize: "28px",
-        background: "#fdf6f0",
-        color: "#e76f51"
-      }}>
-        🐾 Загрузка приюта... Пожалуйста, подождите
-      </div>
-    );
+    return <div className="loading">🐾 Загрузка приюта...</div>;
   }
 
   return (
@@ -45,18 +37,25 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         
-        <Route path="/register" element={<Register />} />
+        {/* Авторизация */}
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* Список животных */}
+        <Route path="/animals" element={<AnimalsList />} />
         
+        {/* Добавление животного */}
+        <Route path="/add-animal" element={<AddAnimal />} />
+
+        {/* Детальная страница животного (+10 баллов) */}
+        <Route path="/animal/:id" element={<AnimalDetail />} />
+
         {/* Защищённая страница */}
         <Route 
           path="/purchase" 
-          element={
-            isAuthenticated ? <Purchase /> : <Navigate to="/login" replace />
-          } 
+          element={isAuthenticated ? <Purchase /> : <Navigate to="/login" replace />} 
         />
 
-        {/* Если адрес неправильный — возвращаем на главную */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       

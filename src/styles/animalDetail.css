@@ -1,0 +1,98 @@
+.detail-page {
+  padding: 40px 20px;
+  background: #fdf6f0;
+  min-height: 100vh;
+}
+
+.detail-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #2a9d8f;
+  font-size: 18px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.detail-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.detail-image {
+  width: 100%;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.detail-info h1 {
+  font-size: 36px;
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.breed-age {
+  font-size: 20px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.status-badge {
+  background: #e6f7f0;
+  color: #2a9d8f;
+  padding: 8px 16px;
+  border-radius: 30px;
+  display: inline-block;
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+.bio-section h3 {
+  color: #2a9d8f;
+  margin-bottom: 12px;
+}
+
+.bio-section p {
+  line-height: 1.7;
+  color: #444;
+  font-size: 17px;
+}
+
+.actions {
+  margin-top: 30px;
+  display: flex;
+  gap: 15px;
+}
+
+.btn-edit, .btn-delete {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-edit {
+  background: #2a9d8f;
+  color: white;
+}
+
+.btn-delete {
+  background: #e63939;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .detail-content {
+    grid-template-columns: 1fr;
+  }
+}
