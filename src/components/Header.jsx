@@ -17,7 +17,7 @@ const Header = () => {
       <div className="header-container">
         <div className="logo-container">
           <img 
-            src="https://yesgooddog.co.uk/wp-content/uploads/2020/06/yes-good-dog-paw-print-icon.png" 
+            src="src/assets/logo.webp" 
             alt="Приют Лапа Добра" 
             className="logo"
           />
@@ -29,11 +29,13 @@ const Header = () => {
 
         <nav className="nav-menu">
           <Link to="/">Главная</Link>
-          <Link to="/purchase">Усыновить</Link>
-          
+          <Link to="/animals">Все животные</Link>
+          <Link to="/favorites">⭐ Избранное</Link>
+          <Link to="/add-animal">+ Добавить</Link>
+
           {isAuthenticated ? (
-            <div className="user-info">
-              <span>👋 {user?.name}</span>
+            <div className="user-section">
+              <span className="user-name">👋 {user?.name}</span>
               <button onClick={handleLogout} className="logout-btn">Выйти</button>
             </div>
           ) : (

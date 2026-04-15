@@ -1,17 +1,15 @@
 /* src/styles/header.css */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
-
 .main-header {
-  background: linear-gradient(135deg, #2a9d8f, #24847a);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #2a9d8f, #1f7a6f);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
 .header-container {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 15px 30px;
   display: flex;
@@ -26,18 +24,16 @@
 }
 
 .logo {
-  width: 65px;           /* ← уменьшили размер */
-  height: 65px;
-  object-fit: contain;   /* важно! сохраняет пропорции */
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
   border-radius: 12px;
   background: white;
-  padding: 5px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 6px;
 }
 
 .logo-text h1 {
   margin: 0;
-  font-family: 'Playfair Display', serif;
   font-size: 28px;
   color: white;
   font-weight: 700;
@@ -46,14 +42,13 @@
 .logo-text p {
   margin: 0;
   font-size: 14px;
-  color: rgba(255,255,255,0.9);
-  font-weight: 400;
+  color: rgba(255,255,255,0.85);
 }
 
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 25px;
+  gap: 28px;
   font-size: 16px;
 }
 
@@ -61,26 +56,29 @@
   color: white;
   text-decoration: none;
   font-weight: 500;
-  transition: all 0.3s;
+  transition: color 0.3s;
 }
 
 .nav-menu a:hover {
   color: #ffd166;
-  transform: translateY(-2px);
 }
 
-.user-info {
+.user-section {
   display: flex;
   align-items: center;
   gap: 15px;
   color: white;
 }
 
+.user-name {
+  font-weight: 500;
+}
+
 .logout-btn {
   background: #e76f51;
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 8px 18px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
@@ -93,19 +91,23 @@
 .register-link {
   background: white;
   color: #2a9d8f;
-  padding: 8px 18px;
+  padding: 8px 20px;
   border-radius: 8px;
   font-weight: 600;
 }
 
 .register-link:hover {
-  background: #f8f9fa;
+  background: #f1f1f1;
 }
 
 /* Адаптив */
 @media (max-width: 768px) {
   .header-container {
     flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+  .nav-menu {
     gap: 15px;
   }
 }

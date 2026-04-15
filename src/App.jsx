@@ -15,9 +15,9 @@ import Purchase from "./pages/Purchase.jsx";
 import AnimalsList from "./pages/AnimalsList.jsx";
 import AddAnimal from "./pages/AddAnimal.jsx";
 import AnimalDetail from "./pages/AnimalDetail.jsx";
-
+import Favorites from "./pages/Favorites.jsx";
 import { checkAuth } from "./features/auth/authSlice";
-
+import EditAnimal from "./pages/EditAnimal.jsx";
 function App() {
   const dispatch = useDispatch();
   const { isAuthenticated, loading } = useSelector((state) => state.auth);
@@ -57,6 +57,8 @@ function App() {
         />
 
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/favorites" element={<Favorites />} />
+        <Route path="/edit/:id" element={<EditAnimal />} />
       </Routes>
       
       <Footer />
