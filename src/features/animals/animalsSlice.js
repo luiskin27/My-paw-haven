@@ -1,128 +1,144 @@
 // src/features/animals/animalsSlice.js
-import { createSlice, nanoid } from '@reduxjs/toolkit';
+// ИЗМЕНЕНО: убран localStorage, добавлены createAsyncThunk для работы с API
+import { createSlice, createAsyncThunk, nanoid } from '@reduxjs/toolkit';
+import {
+  fetchAnimalsApi,
+  createAnimalApi,
+  updateAnimalApi,
+  deleteAnimalApi,
+} from '../../services/animalsApi'; // НОВЫЙ ИМПОРТ из services
 
-const loadFromLocalStorage = () => {
-  try {
-    const saved = localStorage.getItem('animals');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      // Проверка, что данные — массив
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
+// =====================
+// ASYNC THUNKS (НОВЫЕ)
+// =====================
+
+// GET — загрузить всех животных с сервера
+export const fetchAnimals = createAsyncThunk(
+  'animals/fetchAll',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await fetchAnimalsApi();
+    } catch (e) {
+      return rejectWithValue(e.message);
     }
-  } catch (e) {
-    console.error("Ошибка загрузки из localStorage:", e);
   }
+);
 
-  // Дефолтные животные, если ничего не сохранено или ошибка
-  return [
-    {
-      id: '1',
-      name: "Барсик",
-      breed: "Мейн-кун",
-      age: 3,
-      gender: "М",
-      bio: "Очень ласковый и игривый кот. Любит сидеть на руках и мурлыкать.",
-      image: "https://source.unsplash.com/random/300x300/?mainecoon",
-      status: "Ищет дом",
-      likes: 12,
-      rating: [5, 4, 5],
-      isFavorite: false
-    },
-    {
-      id: '2',
-      name: "Рекс",
-      breed: "Лабрадор",
-      age: 2,
-      gender: "М",
-      bio: "Умный и дружелюбный пёс. Хорошо ладит с детьми.",
-      image: "https://source.unsplash.com/random/300x300/?labrador",
-      status: "Ищет дом",
-      likes: 8,
-      rating: [4, 5, 3],
-      isFavorite: false
-    }
-  ];
-};
-
-const initialState = {
-  animals: loadFromLocalStorage()
-};
-
-const saveToLocalStorage = (animals) => {
-  try {
-    localStorage.setItem('animals', JSON.stringify(animals));
-  } catch (e) {
-    console.error("Ошибка сохранения в localStorage:", e);
-  }
-};
-
-const animalsSlice = createSlice({
-  name: 'animals',
-  initialState,
-  reducers: {
-    addAnimal: (state, action) => {
-      state.animals.push({
+// POST — добавить животное на сервер
+export const addAnimalAsync = createAsyncThunk(
+  'animals/addOne',
+  async (animalData, { rejectWithValue }) => {
+    try {
+      const newAnimal = {
+        ...animalData,
         id: nanoid(),
         likes: 0,
         rating: [],
         isFavorite: false,
-        ...action.payload
-      });
-      saveToLocalStorage(state.animals);
-    },
+      };
+      return await createAnimalApi(newAnimal);
+    } catch (e) {
+      return rejectWithValue(e.message);
+    }
+  }
+);
 
-    updateAnimal: (state, action) => {
-      const index = state.animals.findIndex(a => a.id === action.payload.id);
-      if (index !== -1) {
-        state.animals[index] = { 
-          ...state.animals[index], 
-          ...action.payload 
-        };
-        saveToLocalStorage(state.animals);
-      }
-    },
+// PUT — обновить животное на сервере
+export const updateAnimalAsync = createAsyncThunk(
+  'animals/updateOne',
+  async (animalData, { rejectWithValue }) => {
+    try {
+      return await updateAnimalApi(animalData);
+    } catch (e) {
+      return rejectWithValue(e.message);
+    }
+  }
+);
 
-    deleteAnimal: (state, action) => {
-      state.animals = state.animals.filter(a => a.id !== action.payload);
-      saveToLocalStorage(state.animals);
-    },
+// DELETE — удалить животное с сервера
+export const deleteAnimalAsync = createAsyncThunk(
+  'animals/deleteOne',
+  async (id, { rejectWithValue }) => {
+    try {
+      return await deleteAnimalApi(id);
+    } catch (e) {
+      return rejectWithValue(e.message);
+    }
+  }
+);
 
+// =====================
+// SLICE
+// =====================
+
+const animalsSlice = createSlice({
+  name: 'animals',
+  // ИЗМЕНЕНО: убран loadFromLocalStorage, теперь данные приходят с сервера
+  initialState: {
+    animals: [],
+    loading: false,  // НОВОЕ: для loading state
+    error: null,     // НОВОЕ: для error state
+  },
+  reducers: {
+    // Эти действия работают локально (без запроса к серверу)
+    // НОВОЕ: toggleLike теперь только локально меняет UI
     toggleLike: (state, action) => {
       const animal = state.animals.find(a => a.id === action.payload);
-      if (animal) {
-        animal.likes += 1;
-        saveToLocalStorage(state.animals);
-      }
+      if (animal) animal.likes += 1;
     },
-
     toggleFavorite: (state, action) => {
       const animal = state.animals.find(a => a.id === action.payload);
-      if (animal) {
-        animal.isFavorite = !animal.isFavorite;
-        saveToLocalStorage(state.animals);
-      }
+      if (animal) animal.isFavorite = !animal.isFavorite;
     },
-
     addRating: (state, action) => {
       const { id, ratingValue } = action.payload;
       const animal = state.animals.find(a => a.id === id);
-      if (animal) {
-        animal.rating.push(ratingValue);
-        saveToLocalStorage(state.animals);
-      }
-    }
-  }
+      if (animal) animal.rating.push(ratingValue);
+    },
+    // НОВОЕ: сбросить ошибку
+    clearError: (state) => { state.error = null; },
+  },
+  // НОВОЕ: обработка async thunk состояний
+  extraReducers: (builder) => {
+    builder
+      // --- fetchAnimals ---
+      .addCase(fetchAnimals.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAnimals.fulfilled, (state, action) => {
+        state.loading = false;
+        state.animals = action.payload;
+      })
+      .addCase(fetchAnimals.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // --- addAnimalAsync ---
+      .addCase(addAnimalAsync.pending, (state) => { state.loading = true; })
+      .addCase(addAnimalAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.animals.push(action.payload); // НОВОЕ: добавляем в массив
+      })
+      .addCase(addAnimalAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // --- updateAnimalAsync ---
+      .addCase(updateAnimalAsync.fulfilled, (state, action) => {
+        const index = state.animals.findIndex(a => a.id === action.payload.id);
+        if (index !== -1) state.animals[index] = action.payload;
+      })
+
+      // --- deleteAnimalAsync ---
+      .addCase(deleteAnimalAsync.fulfilled, (state, action) => {
+        // НОВОЕ: фильтруем удалённое животное из массива
+        state.animals = state.animals.filter(a => a.id !== action.payload);
+      });
+  },
 });
 
-export const { 
-  addAnimal, 
-  updateAnimal, 
-  deleteAnimal, 
-  toggleLike, 
-  toggleFavorite, 
-  addRating 
-} = animalsSlice.actions;
-
+export const { toggleLike, toggleFavorite, addRating, clearError } = animalsSlice.actions;
 export default animalsSlice.reducer;

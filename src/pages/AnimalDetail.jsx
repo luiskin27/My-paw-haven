@@ -1,7 +1,7 @@
 // src/pages/AnimalDetail.jsx
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteAnimal } from '../features/animals/animalsSlice';
+import { deleteAnimalAsync } from '../features/animals/animalsSlice';  // ← ИСПРАВЛЕНО!
 import '../styles/animalDetail.css';
 
 const AnimalDetail = () => {
@@ -19,7 +19,7 @@ const AnimalDetail = () => {
 
   const handleDelete = () => {
     if (window.confirm(`Удалить ${animal.name}?`)) {
-      dispatch(deleteAnimal(animal.id));
+      dispatch(deleteAnimalAsync(animal.id));  // ← ИСПРАВЛЕНО!
       navigate('/animals');
     }
   };

@@ -1,6 +1,7 @@
 // src/components/AnimalCard.jsx
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleLike, toggleFavorite, deleteAnimal } from '../features/animals/animalsSlice';
+import { toggleLike, toggleFavorite } from '../features/animals/animalsSlice';
+import { deleteAnimalAsync } from '../features/animals/animalsSlice';
 import { Link } from 'react-router-dom';
 
 const AnimalCard = ({ animal }) => {
@@ -13,11 +14,11 @@ const AnimalCard = ({ animal }) => {
 
   const handleLike = () => dispatch(toggleLike(animal.id));
   const handleFavorite = () => dispatch(toggleFavorite(animal.id));
-  const handleDelete = () => {
-    if (window.confirm(`Удалить ${currentAnimal.name}?`)) {
-      dispatch(deleteAnimal(animal.id));
-    }
-  };
+ const handleDelete = () => {
+  if (window.confirm(`Удалить ${currentAnimal.name}?`)) {
+    dispatch(deleteAnimalAsync(animal.id));
+  }
+};
 
   const averageRating = currentAnimal.rating.length 
     ? (currentAnimal.rating.reduce((a, b) => a + b, 0) / currentAnimal.rating.length).toFixed(1) 

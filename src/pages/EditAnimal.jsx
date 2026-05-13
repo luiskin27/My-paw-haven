@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateAnimal } from '../features/animals/animalsSlice';
+import { updateAnimalAsync } from '../features/animals/animalsSlice';  // ← ИСПРАВЛЕНО!
 import '../styles/addAnimal.css';
 
 const EditAnimal = () => {
@@ -42,7 +42,7 @@ const EditAnimal = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {  // ← добавили async
     e.preventDefault();
 
     if (!formData.name || !formData.breed || !formData.bio) {
@@ -50,9 +50,11 @@ const EditAnimal = () => {
       return;
     }
 
-    dispatch(updateAnimal({ id, ...formData }));
-    alert("✅ Изменения сохранены!");
-    navigate(`/animal/${id}`);
+    const result = await dispatch(updateAnimalAsync({ id, ...formData }));  // ← ИСПРАВЛЕНО!
+    if (!result.error) {
+      alert("✅ Изменения сохранены!");
+      navigate(`/animal/${id}`);
+    }
   };
 
   if (!animal) {
